@@ -1,18 +1,19 @@
-// Play a certain level on typingclub.com
-// Usage:
-// node type.js [OPTIONS]
-// Options:
-// -h : HEADLESS, will not display the browser
+/*
+  Play a certain level on typingclub.com
+  Usage:
+  node type.js [OPTIONS] filename
+  Options:
+  -h : HEADLESS, will not display the browser
+*/
 const puppeteer = require("puppeteer");
 require("dotenv").config();
 
 const args = process.argv.slice(2);
 const headless = args[0] == "-h";
+const filename = args.find(arg => arg.includes(".json"));
+const { text, link } = require(filename);
+
 const waitTime = 2;
-const symbols = [
-  "a!s@d#f$g%h^j&k*l(;) q!w@e3r$t%y^u&i*o(p) z!x@c#v$b%n^m&,*.(",
-];
-const levelLink = "https://www.typingclub.com/sportal/program-3/396.play";
 
 const asyncForEach = async (array, callback) => {
   for (let i = 0; i < array.length; i++) await callback(array[i], i, array);
@@ -38,7 +39,7 @@ async function main() {
   if (EMAIL != null) await login(EMAIL, PASSWORD);
   else console.log("No EMAIL and PASSWORD defined in .env, playing as guest");
 
-  await page.goto(levelLink);
+  await page.goto(link);
 
   // remove annoying popup
   const classSelect =
@@ -51,12 +52,12 @@ async function main() {
   console.log("Starting rampage...");
   async function type(num) {
     await page.waitForSelector("body > input[type=text]");
-    await asyncForEach(symbols, async line => {
+    await asyncForEach(text, async line => {
       await page.keyboard.type(line);
       await page.keyboard.press("Enter");
     });
     await page.waitFor(waitTime * 1000);
-    await page.goto(levelLink);
+    await page.goto(link);
     process.stdout.write("\rIterations: " + ++iterations);
     if (num > 0) {
       await type(num - 1);
@@ -66,7 +67,7 @@ async function main() {
   const arr = new Array(100).fill(0);
   await asyncForEach(arr, async () => {
     await asyncForEach(arr, async () => {
-      await type(100, symbols);
+      await type(100, text);
     });
   });
 }
