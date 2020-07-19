@@ -10,10 +10,10 @@
 const puppeteer = require("puppeteer");
 
 async function main() {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: false, slowMo: 8 });
   const page = await browser.newPage();
 
-  const link = "https://10fastfingers.com/typing-test/english";
+  const link = "https://10fastfingers.com/typing-test/korean";
 
   await page.goto(link, { waitUntil: "networkidle0" });
 
@@ -33,9 +33,13 @@ async function main() {
   while (await ongoing()) {
     await page.focus("#inputfield");
     const word = await page.evaluate(() => {
-      return document.querySelector("#row1 > span.highlight").innerText;
+      const currentWord = document.querySelector("#row1 > span.highlight");
+      if (currentWord != null) {
+        return currentWord.innerText;
+      }
+      return "";
     });
-    await page.keyboard.type(word + " ");
+    await page.keyboard.type(word != "" ? word + " " : word);
   }
   await page.waitForSelector("#wpm > strong");
   const wpm = await page.evaluate(() => {

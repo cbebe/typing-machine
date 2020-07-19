@@ -1,18 +1,18 @@
 {
   "name": "typing-machine",
   "version": "1.0.0",
-  "description": "",
+  "description": "Playing around typing test websites using puppeteer",
   "main": "type.js",
   "scripts": {
     "start": "node type.js -h",
     "devStart": "nodemon type.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "puppeteer"
+  ],
+  "author": "Charles Ancheta",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "mongoose": "^5.9.21",
     "puppeteer": "^5.0.0"
   },
   "devDependencies": {
